@@ -1,5 +1,7 @@
 use std::ops::Deref;
 
+use crate::build_message;
+
 pub fn play() {
     let greeter1 = DefaultGreeter {};
     let greeter2 = LunfardoGreeter {};
@@ -11,8 +13,8 @@ pub fn play() {
         EnumGreeter::DefaultGreeter(),
     ];
 
-    println!("{}", say_hello(greeters));
-    println!("{}", say_hello2(greeters2));
+    println!("{}", apply_greeters(greeters));
+    println!("{}", apply_greeters2(greeters2));
 }
 
 enum EnumGreeter {
@@ -35,30 +37,12 @@ pub trait Greeter {
     fn hi(&self) -> String;
 }
 
-fn say_hello<T: Deref<Target = dyn Greeter>>(greeters: Vec<T>) -> String {
-    let iter = greeters.into_iter();
-
-    let mut great_greet = "".to_string();
-    for greet in iter {
-        let g = greet.hi();
-        great_greet.push_str("\n");
-        great_greet.push_str(&g);
-    }
-
-    great_greet.to_string()
+fn apply_greeters<T: Deref<Target = dyn Greeter>>(greeters: Vec<T>) -> String {
+    build_message!(greeters) // maybe overkill here using this macro but it was fun
 }
 
-fn say_hello2(greeters: Vec<EnumGreeter>) -> String {
-    let iter = greeters.into_iter();
-
-    let mut great_greet = "".to_string();
-    for greet in iter {
-        let g = greet.hi();
-        great_greet.push_str("\n");
-        great_greet.push_str(&g);
-    }
-
-    great_greet.to_string()
+fn apply_greeters2(greeters: Vec<EnumGreeter>) -> String {
+    build_message!(greeters) // maybe overkill here using this macro but it was fun
 }
 
 struct DefaultGreeter;
